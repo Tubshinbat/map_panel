@@ -1,0 +1,446 @@
+.custom-login-form{
+  height: 40px;
+}
+.custom-login-form:hover,
+.custom-login-form:visited{
+  background:none !important;
+  border-color: #313e54 !important;
+}
+
+:where(.css-dev-only-do-not-override-3rel02).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled){
+  background:none !important;
+}
+
+:where(.css-dev-only-do-not-override-f7vrd6).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled){
+  background:none !important;
+}
+
+.height-45{
+  height: 45px;
+}
+
+.login-btn{
+  background: #635bff !important;
+  border-color: #635bff !important;
+  color:#fff !important;
+  height: 45px !important ;
+}
+
+.login-btn:hover{
+  background:#544dd9 !important;
+  border-color: #544dd9 !important;
+}
+.sidebartoggler {
+  font-size: 1.6rem !important;
+}
+
+.nav-link{
+  cursor: pointer;
+}
+
+.nav-small-cap{
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+
+.count-box-icon{
+  font-size: 1.4rem;
+  color:#fff !important;
+}
+
+.page-nav{
+  display: flex;
+  flex-direction: row;
+  list-style: none;
+  gap:20px;
+}
+
+.page-nav-item a{
+  color:#a1a1a1;
+}
+
+.page-nav-item:hover a{
+  color:#dfdede;
+  transition: all 0.6s;
+}
+
+.page-nav-item.active{
+  color:#fff;
+  border-bottom: 2px solid #3a3c3f;
+  padding-bottom: 3px;
+}
+
+.page-nav-item.active a{
+  color:#fff;
+}
+
+/* Ant table css */
+.ant-table {
+  background: #1f1f2e;
+  color: #fff;
+  overflow-x:auto;
+}
+
+.ant-table-thead > tr > th  {
+  overflow: hidden;
+  background-color: #2b2b3b !important;
+  color: #bebebe !important; 
+  border-bottom: 1px solid #444;
+  font-size: 12px !important;
+  padding:20px 15px 20px 15px !important;
+  border-bottom:1px solid #575757 !important;
+}
+
+.ant-table-thead > tr > th .ant-table-column-sorter,
+.ant-table-thead > tr > th .ant-dropdown-trigger{
+  color:#5f5f5f !important;
+  font-size: 10px !important;
+}
+
+.ant-table-thead > tr > th.ant-table-column-title{
+  font-size: 10px !important;
+}
+
+.ant-table-thead > tr > th::before{
+  background-color: #3b3b45 !important;
+}
+
+.ant-table-tbody > tr > td {
+  background: #1f1f2e;
+  color: #bdbdbd;
+  border-bottom: 1px solid #444 !important;
+  cursor: pointer;
+  font-size: 14px;
+  padding:24px 10px !important;
+}
+
+.ant-table-tbody > tr:nth-child(odd) {
+  background: #25253b !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #1b1b2b !important;
+}
+
+.ant-pagination-item {
+  background: #2b2b3b;
+  color: #fff;
+}
+
+.ant-pagination-item-active {
+  background: #555;
+  border-color: #555;
+}
+
+.ant-pagination-item-link {
+  background: #2b2b3b;
+  color: #fff;
+}
+
+.ant-card {
+  background: #1f1f2e;
+  color: #fff;
+}
+
+.ant-card-body {
+  background: #1f1f2e;
+}
+
+[data-simplebar] {
+  background: #1f1f2e;
+}
+
+.table-row-dark {
+  background-color: #1f1f2e !important;
+}
+
+.table-row-dark-hover:hover {
+  background-color: #1b1b2b !important;
+}
+
+.ant-checkbox-input, .ant-checkbox .ant-checkbox-inner{
+  background: #858585 !important ;
+  border:1px solid #1a1424  !important;
+}
+
+.ant-table-row.ant-table-row-selected, .ant-table-row.ant-table-row-selected >.ant-table-cell, .ant-table-column-sort{
+  background-color:#172b3b !important;
+}
+
+.ant-table-thead tr th:first-child {
+  border-start-start-radius: 0px !important;
+}
+
+.ant-pagination .ant-pagination-item-active {
+  font-weight: 600;
+  background-color: #273a58;
+  border-color: #364860;
+}
+
+.ant-pagination{
+  display: flex;
+  align-items: center;
+}
+
+.ant-pagination.ant-pagination-mini .ant-pagination-item {
+  min-width: 35px;
+  height: 35px;
+  margin: 0;
+  line-height: 35px;
+}
+
+.ant-pagination .ant-pagination-prev button, .ant-pagination .ant-pagination-next button {
+  color: rgb(251 251 251 / 88%);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Datatable */
+
+.datatable-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.datatable-tools {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.datatable-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-size: 16px;
+  background-color: #14233b3d;
+  border: 1px solid #152744;
+  padding: 8px 8px;
+  border-radius: 5px;
+  transition: all 0.2s ease-in;
+  color:#b6b6b6;
+}
+
+.datatable-tool:hover {
+  background-color: #14233b;
+  color: #fff;
+}
+
+.table-image img{ 
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+}
+
+
+
+.datatable-header-tools {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.datatable-action {
+  display: flex;
+  gap: 5px;
+  padding: 7px 18px;
+  font-size: 12px;
+  color: #9c9c9c;
+  background: none;
+  border: 1px solid #5c5c5c;
+  transition: all 0.3s ease-in;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+}
+
+.datatable-action i {
+  font-size: 8px;
+}
+/* 
+.add-bg{
+  color:#008b5d;
+  border-color: #008b5d;
+}
+
+.edit-bg{
+  color:#be720e;
+  border-color: #be720e;
+}
+
+.delete-bg{
+  color:#a01818;
+  border-color: #941c1c;
+} */
+
+.add-bg:hover{
+  background-color: #008559 !important;
+  border-color: #025539 !important;
+  color:#fff !important;
+}
+
+.edit-bg:hover{
+  background-color: #df7f02 !important;
+  border-color: #bd6f09 !important;
+  color:#fff !important;
+}
+
+.delete-bg:hover{
+  background-color: #661c1c !important;
+  border-color: #8f0707 !important;
+  color:#fff !important;
+}
+
+.ant-empty-normal .ant-empty-description {
+  color: rgb(205 205 205 / 45%);
+}
+
+/* Table  */
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table td,
+.custom-table th {
+  border: 1px solid #ddd;
+  padding: 5px;
+}
+
+.custom-table td {
+  text-align: center;
+}
+.custom-table td:nth-child(2) {
+  text-align: left;
+}
+
+.custom-table th {
+  text-align: center;
+}
+
+/* Table */
+.custom-form{
+  color:#bdbdbd;
+}
+
+.white-input input, .white-input .ant-input-outlined{
+  border-color: #bebebe !important;
+  color: rgba(27, 27, 27, 0.856) !important;
+  background-color: #f1f1f1 !important;
+}
+
+.white-input input{
+  height: 40px;
+  color:#000 !important;
+}
+
+.white-input input::placeholder{
+  color: #9c9c9c;
+  font-size: 13px;
+}
+
+
+.dark-input label{
+  color:rgba(255,255,255,.6) !important;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.dark-input input, .dark-input .ant-input-outlined{
+  border-color: #313e54 !important;
+  color: rgba(255, 255, 255, 0.856) !important;
+  background-color: #1a2537 !important;
+}
+
+.dark-input input{
+  height: 35px;
+}
+
+.dark-input input::placeholder{
+  color: #aaaaaa;
+  font-size: 13px;
+}
+
+.ant-form-item .ant-form-item-explain-error {
+  color: #ff4d4f;
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.card-title-small{
+  font-size: 14px;
+}
+
+.text-end{
+  display: flex;
+  gap: 10px;
+}
+
+.custom-btn{
+  display: flex;
+  font-size: 12px;
+}
+
+.switch-input{
+  margin-bottom: 5px;
+}
+
+.custom-tree{
+  background: none !important;
+  color:#c9c9c9 !important;
+}
+
+.custom-tree .ant-tree-node-selected{
+  background: #114874 !important;
+}
+
+.custom-tree .ant-tree-checkbox-inner{
+  background:#1a2b47 !important;
+  border: 1px solid #38414e !important;
+}
+
+.custom-tree .ant-tree-switcher{
+  width: 10px;
+}
+
+.anticon.anticon-inbox{
+  font-size: 34px !important;
+  color:#b9b9b9 !important;
+}
+
+.ant-upload-text{
+  font-size: 14px !important;
+  font-weight: 600;
+  line-height: 16px;
+  color:#bebebe !important;
+}
+
+.ant-upload-hint{
+  color:#5c5c5c !important;
+  font-size: 12px !important;
+}
+
+.ant-upload-list-item-container{
+  margin-top:10px;
+  color:#fff;
+}
+
+.ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-icon .anticon, .ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-list-item-actions .anticon{
+  color:#ffffff6c !important;
+}
+
+.ant-upload-wrapper .ant-upload-list .ant-upload-list-item .ant-upload-list-item-actions .ant-upload-list-item-action{
+  opacity: 1;
+}
+
+.select-menu{
+  font-size: 14px;
+}
