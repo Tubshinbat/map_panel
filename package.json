@@ -15,6 +15,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@googlemaps/react-wrapper": "^1.1.35",
+    "@react-google-maps/api": "^2.19.3",
     "@tinymce/tinymce-react": "^5.1.1",
     "animate.css": "^4.1.1",
     "antd": "^5.19.0",
@@ -36,11 +37,14 @@
     "react-cookie": "^7.1.4",
     "react-dom": "^18.3.1",
     "react-highlight-words": "^0.20.0",
+    "react-icon-picker": "^1.0.0",
+    "react-icons-picker": "^1.0.9",
     "react-js-pagination": "^3.0.2",
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.24.1",
     "react-toastify": "^10.0.5",
-    "rimraf": "^5.0.7"
+    "rimraf": "^5.0.7",
+    "transliteration": "^2.3.5"
   },
   "devDependencies": {
     "video.js": "^8.12.0"

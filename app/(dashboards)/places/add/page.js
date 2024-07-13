@@ -1,6 +1,18 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Button, Form, Input, Switch, Tree, Upload, message } from "antd";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Switch,
+  Tree,
+  Upload,
+  message,
+} from "antd";
+import { AppstoreAddOutlined } from "@ant-design/icons";
+import IconPicker from "react-icon-picker";
+
 import axios from "axios-base";
 import { Editor } from "@tinymce/tinymce-react";
 
@@ -16,10 +28,12 @@ import { useNotificationContext } from "context/notificationContext";
 // Lib
 import { menuGenerateData } from "lib/menuGenerate";
 import { buildFileInput, deleteImage, uploadImage } from "lib/files";
-import ImageDrag from "components/Generals/ImageDrag";
+import ImageDrag, { OneImageDrag } from "components/Generals/ImageDrag";
 import { useRouter } from "next/navigation";
 import { convertFromdata } from "lib/check";
 import usePlace from "hooks/usePlace";
+import ServiceItem from "components/Generals/ServiceItem";
+import MapModal from "components/Modal/MapModal";
 
 // INIT DATA
 const requiredRule = {
@@ -27,12 +41,123 @@ const requiredRule = {
   message: "Тус талбарыг заавал бөглөнө үү",
 };
 
+const icons = [
+  "fas fa-bed",
+  "fas fa-bell",
+  "fas fa-bath",
+  "fas fa-broom",
+  "fas fa-bus",
+  "fas fa-car",
+  "fas fa-car-side",
+  "fas fa-coffee",
+  "fas fa-concierge-bell",
+  "fas fa-cocktail",
+  "fas fa-dumbbell",
+  "fas fa-door-closed",
+  "fas fa-door-open",
+  "fas fa-hotel",
+  "fas fa-key",
+  "fas fa-luggage-cart",
+  "fas fa-shuttle-van",
+  "fas fa-spa",
+  "fas fa-swimming-pool",
+  "fas fa-tv",
+  "fas fa-utensils",
+  "fas fa-wifi",
+  "fas fa-hot-tub",
+  "fas fa-wine-glass-alt",
+  "fas fa-mug-hot",
+  "fas fa-suitcase",
+  "fas fa-map",
+  "fas fa-plane",
+  "fas fa-ticket-alt",
+  "fas fa-glass-cheers",
+  "fas fa-hamburger",
+  "fas fa-birthday-cake",
+  "fas fa-ice-cream",
+  "fas fa-pizza-slice",
+  "fas fa-drumstick-bite",
+  "fas fa-fish",
+  "fas fa-apple-alt",
+  "fas fa-carrot",
+  "fas fa-seedling",
+  "fas fa-bread-slice",
+  "fas fa-hiking",
+  "fas fa-mountain",
+  "fas fa-campground",
+  "fas fa-tree",
+  "fas fa-fire",
+  "fas fa-snowflake",
+  "fas fa-umbrella-beach",
+  "fas fa-sun",
+  "fas fa-cloud-sun",
+  "fas fa-anchor",
+  "fas fa-bicycle",
+  "fas fa-boat",
+  "fas fa-compass",
+  "fas fa-directions",
+  "fas fa-futbol",
+  "fas fa-gift",
+  "fas fa-globe",
+  "fas fa-golf-ball",
+  "fas fa-hand-sparkles",
+  "fas fa-heart",
+  "fas fa-landmark",
+  "fas fa-music",
+  "fas fa-paint-brush",
+  "fas fa-parachute-box",
+  "fas fa-parking",
+  "fas fa-paw",
+  "fas fa-plane-arrival",
+  "fas fa-plane-departure",
+  "fas fa-portrait",
+  "fas fa-receipt",
+  "fas fa-restroom",
+  "fas fa-road",
+  "fas fa-route",
+  "fas fa-school",
+  "fas fa-shopping-cart",
+  "fas fa-skiing",
+  "fas fa-skiing-nordic",
+  "fas fa-snowboarding",
+  "fas fa-snowman",
+  "fas fa-socks",
+  "fas fa-suitcase-rolling",
+  "fas fa-tachometer-alt",
+  "fas fa-tag",
+  "fas fa-taxi",
+  "fas fa-ticket",
+  "fas fa-toilet-paper",
+  "fas fa-tooth",
+  "fas fa-train",
+  "fas fa-tram",
+  "fas fa-tree",
+  "fas fa-umbrella",
+  "fas fa-user-check",
+  "fas fa-user-friends",
+  "fas fa-user-tag",
+  "fas fa-volleyball-ball",
+  "fas fa-wallet",
+  "fas fa-wheelchair",
+  "fas fa-wind",
+  "fas fa-wine-bottle",
+  "fas fa-yin-yang",
+];
+
 const Page = () => {
   const [form] = Form.useForm();
+  const [modalForm] = Form.useForm();
   const router = useRouter();
-  const { contentLoad, setError } = useNotificationContext();
+  const [markerPosition, setMarkerPosition] = useState(null);
+  const { contentLoad } = useNotificationContext();
   const { createPlace } = usePlace();
   const [pictures, setPictures] = useState([]);
+  const [photo, setPhoto] = useState(null);
+  const [visible, setVisible] = useState({
+    map: false,
+    service: false,
+  });
+  const [services, setServices] = useState([]);
   const [deletePictures, setDeletePictures] = useState([]);
   const [gData, setGData] = useState([]);
   const [checkedRadio, setCheckedRadio] = useState({
@@ -45,6 +170,7 @@ const Page = () => {
   // Config init
 
   useEffect(() => {
+    modalForm.setFieldsValue({ icon: "fas fa-sun" });
     return () => clear();
   }, []);
 
@@ -56,16 +182,20 @@ const Page = () => {
 
   // Handle functions
   const handleEditor = (event) => {
-    form.setFieldsValue({ details: event });
+    form.setFieldsValue({ about: event });
   };
 
   const handleAdd = async (values) => {
     if (Array.isArray(pictures) && pictures.length > 0)
       values.pictures = pictures.map((el) => el.name);
 
-    if (Array.isArray(deletePictures) && deletePictures.length > 0) {
+    if (Array.isArray(deletePictures) && deletePictures.length > 0)
       deletePictures.map(async (img) => await deleteImage(img));
-    }
+
+    if (Array.isArray(services) && services.length > 0)
+      values.services = JSON.stringify(services);
+
+    if (photo) values.logo = photo.name;
 
     const data = {
       ...values,
@@ -75,11 +205,14 @@ const Page = () => {
     };
 
     if (data.categories.length <= 0) delete data.categories;
+
+    console.log(data);
+
     const sendData = convertFromdata(data);
-    const result = await createNews(sendData);
+    const result = await createPlace(sendData);
     if (result)
       setTimeout(() => {
-        router.push("/news");
+        router.push("/places");
       }, 600);
   };
 
@@ -108,6 +241,37 @@ const Page = () => {
     setCheckedKeys(checkedKeysValue);
   };
 
+  const handleService = () => {
+    modalForm
+      .validateFields()
+      .then((values) => {
+        setServices((prevServices) => [...prevServices, values]);
+        handleCancel();
+        modalForm.resetFields();
+      })
+      .catch();
+  };
+
+  const handleDelete = (index) => {
+    setServices((prevServices) => {
+      if (prevServices.length === 1) return [];
+      else return prevServices.filter((_, i) => i !== index);
+    });
+  };
+
+  const handleMap = (place) => {
+    form.setFieldsValue({ ...place });
+    handleCancel();
+  };
+
+  const showModal = (modal) => {
+    setVisible((sb) => ({ ...sb, [modal]: true }));
+  };
+
+  const handleCancel = () => {
+    setVisible((bprev) => ({ ...bprev, map: false, service: false }));
+  };
+
   return (
     <>
       <div className="page-wrapper">
@@ -119,7 +283,7 @@ const Page = () => {
               <div className="row align-items-center">
                 <div className="col-12">
                   <div className="d-sm-flex align-items-center justify-space-between">
-                    <h4 className="mb-4 mb-md-0 card-title">Мэдээ нэмэх</h4>
+                    <h4 className="mb-4 mb-md-0 card-title">Газар нэмэх</h4>
                   </div>
                 </div>
               </div>
@@ -138,19 +302,19 @@ const Page = () => {
                       <div className="row">
                         <div className="col-12">
                           <Form.Item
-                            label="Мэдээний гарчиг"
+                            label="Газрын нэршил"
                             name="name"
                             className="dark-input"
                             rules={[requiredRule]}
                             hasFeedback
                           >
-                            <Input placeholder="Мэдээний гарчиг оруулна уу" />
+                            <Input placeholder="Газрын нэршил оруулна уу" />
                           </Form.Item>
                         </div>
                         <div className="col-12">
                           <Form.Item
-                            label="Мэдээний дэлгэрэнгүй"
-                            name="details"
+                            label="Дэлгэрэнгүй"
+                            name="about"
                             className="dark-input"
                             rules={[requiredRule]}
                             getValueFromEvent={(e) =>
@@ -196,6 +360,103 @@ const Page = () => {
                             />
                           </Form.Item>
                         </div>
+                        <div className="col-12">
+                          <Form.Item
+                            label="Үйлчилгээнүүд"
+                            className="dark-input"
+                          >
+                            <Button
+                              className="service-btn"
+                              icon={<AppstoreAddOutlined />}
+                              onClick={() => showModal("service")}
+                            >
+                              Нэмэх
+                            </Button>
+                          </Form.Item>
+                          <div className="service-items">
+                            {services.map((service, index) => (
+                              <ServiceItem
+                                key={index}
+                                icon={service.icon}
+                                service={service.name}
+                                handleDelete={() => handleDelete(index)}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <div className="col-md-12">
+                          <Form.Item
+                            label="Хаягын мэдээлэл"
+                            name="addressText"
+                            className="dark-input"
+                            hasFeedback
+                          >
+                            <Input placeholder="Хаягын дэлгэрэнгүй мэдээллийг оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-6">
+                          <Form.Item
+                            label="Address_kh"
+                            name="address_kh"
+                            className="dark-input"
+                            hasFeedback
+                          >
+                            <Input placeholder="Address_kh оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-6">
+                          <Form.Item
+                            label="Address_ne"
+                            name="address_ne"
+                            className="dark-input"
+                            hasFeedback
+                          >
+                            <Input placeholder="Address_ne оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-12">
+                          <Form.Item
+                            label="Гудамжын мэдээлэл"
+                            name="address_st"
+                            className="dark-input"
+                            hasFeedback
+                          >
+                            <Input placeholder="Гудамжын мэдээлэл оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-5">
+                          <Form.Item
+                            name="lat"
+                            label="Өргөрөг"
+                            className="dark-input"
+                            rules={[requiredRule]}
+                            hasFeedback
+                          >
+                            <Input placeholder="Өргөрөгийг оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-5">
+                          <Form.Item
+                            name="lng"
+                            label="Уртраг"
+                            className="dark-input"
+                            rules={[requiredRule]}
+                            hasFeedback
+                          >
+                            <Input placeholder="Уртрагыг оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-2">
+                          <Form.Item label={" "}>
+                            <Button
+                              className="map-btn"
+                              shape="circle"
+                              icon={<i class="ti ti-map-2"></i>}
+                              size="large"
+                              onClick={() => showModal("map")}
+                            ></Button>
+                          </Form.Item>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -218,6 +479,19 @@ const Page = () => {
                           autoExpandParent={false}
                         />
                       </Form.Item>
+                    </div>
+                  </div>
+                  <div className="card">
+                    <div className="px-4 py-3 border-bottom">
+                      <h6 className="card-title card-title-small mb-0">
+                        Лого оруулах
+                      </h6>
+                    </div>
+                    <div className="card-body p-3">
+                      <OneImageDrag
+                        setDeletePictures={setDeletePictures}
+                        setPhoto={setPhoto}
+                      />
                     </div>
                   </div>
                   <div className="card">
@@ -298,6 +572,49 @@ const Page = () => {
         </div>
 
         <TemplateSettings />
+        <MapModal
+          open={visible && visible.map}
+          handleMap={handleMap}
+          handleCancel={handleCancel}
+          markerPosition={markerPosition}
+        />
+        <Modal
+          open={visible && visible.service}
+          title="Үйлчилгээ нэмэх"
+          onClick={() => handleService()}
+          onCancel={() => handleCancel()}
+          footer={[
+            <Button onClick={() => handleCancel()}> Буцах </Button>,
+            <Button
+              key="submit"
+              htmlType="submit"
+              type="primary"
+              onClick={() => handleService()}
+            >
+              Хадгалах
+            </Button>,
+          ]}
+        >
+          <div className="modal-body">
+            <Form form={modalForm}>
+              <div className="iconpiker-item white-input">
+                <Form.Item name="icon" className="icon-picker">
+                  <IconPicker defaultValue="fas fa-sun" icons={icons} />
+                </Form.Item>
+                <Form.Item
+                  name="name"
+                  rules={[requiredRule]}
+                  style={{ width: "100%" }}
+                >
+                  <Input
+                    className="custom-input"
+                    placeholder="Үйлчилгээний нэршил"
+                  />
+                </Form.Item>
+              </div>
+            </Form>
+          </div>
+        </Modal>
       </div>
     </>
   );

@@ -83,6 +83,23 @@ export default () => {
     }
   };
 
+  const deleteMenu = async (id) => {
+    try {
+      setContentLoad(true);
+      const result = await axios.delete(`/news-categories/${id}`);
+      if (result && result.data) {
+        setAlert("Өгөгдөл устгадлаа");
+        loadNewsCategories();
+        return true;
+      }
+      setContentLoad(false);
+    } catch (error) {
+      setError(error);
+      setContentLoad(false);
+      return false;
+    }
+  };
+
   useEffect(() => {
     const fetchDatas = async () => {
       await loadNewsCategories();
@@ -101,6 +118,7 @@ export default () => {
     getNewsCategory,
     setCategory,
     category,
+    deleteMenu,
     changePosition,
     updateNewsCategory,
     createNewsCategory,

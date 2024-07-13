@@ -1,8 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Switch, Tree, Upload, message } from "antd";
-import axios from "axios-base";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Switch,
+  Tree,
+  Upload,
+  message,
+} from "antd";
+
 import { Editor } from "@tinymce/tinymce-react";
+import { slugify } from "transliteration";
 
 // Components
 import TemplateSettings from "components/Generals/TemplateSettings";
@@ -102,6 +112,10 @@ const Page = () => {
     pictures.map(async (el) => await deleteImage(el.name));
   };
 
+  const handleName = (event) => {
+    form.setFieldValue("slug", slugify(event.target.value));
+  };
+
   // -- TREE FUNCTIONS
 
   const onCheck = (checkedKeysValue) => {
@@ -117,7 +131,7 @@ const Page = () => {
           <div className="container-fluid">
             <div className="card card-body py-3">
               <div className="row align-items-center">
-                <div className="col-12">
+                <div className="col-md-12">
                   <div className="d-sm-flex align-items-center justify-space-between">
                     <h4 className="mb-4 mb-md-0 card-title">Мэдээ нэмэх</h4>
                   </div>
@@ -136,7 +150,7 @@ const Page = () => {
                     </div>
                     <div className=" card-body py-3">
                       <div className="row">
-                        <div className="col-12">
+                        <div className="col-md-12">
                           <Form.Item
                             label="Мэдээний гарчиг"
                             name="name"
@@ -144,10 +158,24 @@ const Page = () => {
                             rules={[requiredRule]}
                             hasFeedback
                           >
-                            <Input placeholder="Мэдээний гарчиг оруулна уу" />
+                            <Input
+                              placeholder="Мэдээний гарчиг оруулна уу"
+                              onChange={handleName}
+                            />
                           </Form.Item>
                         </div>
-                        <div className="col-12">
+                        <div className="col-md-12">
+                          <Form.Item
+                            label="Хаяг"
+                            name="slug"
+                            className="dark-input"
+                            rules={[requiredRule]}
+                            hasFeedback
+                          >
+                            <Input placeholder="Хаяг оруулна уу" />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-12">
                           <Form.Item
                             label="Мэдээний дэлгэрэнгүй"
                             name="details"
@@ -264,6 +292,14 @@ const Page = () => {
                           checked={checkedRadio.star}
                           onChange={(checked) => handleRadio(checked, "star")}
                         />
+                      </Form.Item>
+
+                      <Form.Item
+                        className="dark-input"
+                        label="Нийтлэгдсэн огноо"
+                        name="createAt"
+                      >
+                        <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
                       </Form.Item>
                     </div>
                     <div className="p-3 border-top">

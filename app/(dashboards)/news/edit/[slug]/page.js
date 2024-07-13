@@ -1,8 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Switch, Tree, Upload, message } from "antd";
-import axios from "axios-base";
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  Switch,
+  Tree,
+  Upload,
+  message,
+} from "antd";
 import { Editor } from "@tinymce/tinymce-react";
+import { slugify } from "transliteration";
 
 // Components
 import TemplateSettings from "components/Generals/TemplateSettings";
@@ -21,6 +30,7 @@ import useNews from "hooks/useNews";
 import { useRouter } from "next/navigation";
 import base from "lib/base";
 import { convertFromdata } from "lib/check";
+import moment from "moment";
 
 // INIT DATA
 const requiredRule = {
@@ -136,6 +146,10 @@ const Page = ({ params: { slug } }) => {
     setCheckedKeys(checkedKeysValue);
   };
 
+  const handleName = (event) => {
+    form.setFieldValue("slug", slugify(event.target.value));
+  };
+
   return (
     <>
       <div className="page-wrapper">
@@ -172,7 +186,21 @@ const Page = ({ params: { slug } }) => {
                             rules={[requiredRule]}
                             hasFeedback
                           >
-                            <Input placeholder="Мэдээний гарчиг оруулна уу" />
+                            <Input
+                              placeholder="Мэдээний гарчиг оруулна уу"
+                              onChange={handleName}
+                            />
+                          </Form.Item>
+                        </div>
+                        <div className="col-md-12">
+                          <Form.Item
+                            label="Хаяг"
+                            name="slug"
+                            className="dark-input"
+                            rules={[requiredRule]}
+                            hasFeedback
+                          >
+                            <Input placeholder="Хаяг оруулна уу" />
                           </Form.Item>
                         </div>
                         <div className="col-12">

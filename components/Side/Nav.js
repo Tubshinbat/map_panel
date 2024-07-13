@@ -34,6 +34,29 @@ const Nav = () => {
           icon={"material-symbols:map-outline"}
           label={`Газрууд`}
         />
+        <SideBarItem
+          href="/rooms"
+          icon={"fluent:conference-room-20-regular"}
+          label={`Өрөөнүүд`}
+        />
+        <li className="nav-small-cap">
+          <span className="hide-menu">Дата</span>
+        </li>
+        <SideBarItem
+          href="/plans"
+          icon={"material-symbols-light:wallet"}
+          label={`Төлбөр`}
+        />
+        <SideBarItem
+          href="/rates"
+          icon={"material-symbols:star-rate"}
+          label={`Үнэлгээнүүд`}
+        />
+        <SideBarItem
+          href="/orders"
+          icon={"lets-icons:order"}
+          label={`Захиалга`}
+        />
       </ul>
     </nav>
   );

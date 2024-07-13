@@ -17,6 +17,7 @@ import usePlace from "hooks/usePlace";
 // Lib
 import base from "lib/base";
 import { toastControl } from "lib/toastControl";
+import PageNavItem from "components/Page/PagenavItem";
 
 // Init
 const requiredRule = {
@@ -270,8 +271,8 @@ const Page = () => {
       sorter: (a, b) => handleSort(),
     },
     {
-      dataIndex: "PlaceCategory",
-      key: "PlaceCategory",
+      dataIndex: "categories",
+      key: "categories",
       title: "Ангилал",
       status: true,
       render: (text, record) => {
@@ -543,7 +544,13 @@ const Page = () => {
             <div className="card card-body py-3">
               <div className="row">
                 <div className="d-sm-flex align-items-center justify-space-between">
-                  <h4 className="mb-4 mb-md-0 card-title">Газрууд</h4>
+                  <nav className="page-nav ">
+                    <PageNavItem label="Газрууд" link="/places" />
+                    <PageNavItem
+                      label="Газруудын ангилал"
+                      link="/place-categories"
+                    />
+                  </nav>
                 </div>
               </div>
             </div>

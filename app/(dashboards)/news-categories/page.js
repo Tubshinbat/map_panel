@@ -35,6 +35,7 @@ const Page = () => {
     changePosition,
     createNewsCategory,
     updateNewsCategory,
+    deleteMenu: deleteNewsCategory,
   } = useNewsCategories();
 
   useEffect(() => {
@@ -127,6 +128,7 @@ const Page = () => {
   const handleCancel = () => {
     form.resetFields();
     setVisible((sb) => Object.keys(sb).map((el) => (sb[el] = false)));
+    setCategory(null);
   };
 
   const handleAdd = (isParent = false) => {
@@ -150,7 +152,11 @@ const Page = () => {
       .catch((error) => message.error(error));
   };
 
-  const deleteMenu = () => {};
+  const deleteMenu = async () => {
+    const result = await deleteNewsCategory(category._id);
+    handleCancel();
+    setCategory(null);
+  };
 
   return (
     <>

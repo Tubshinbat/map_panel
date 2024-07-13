@@ -61,6 +61,24 @@ export default () => {
         await loadPlaceCategories();
         return true;
       }
+      setContentLoad(false);
+    } catch (error) {
+      setError(error);
+      setContentLoad(false);
+      return false;
+    }
+  };
+
+  const deletePlaceCategory = async (id) => {
+    try {
+      setContentLoad(true);
+      const result = await axios.delete(`place-categories/${id}`);
+      if (result && result.data) {
+        setAlert("Өгөгдөл устгадлаа");
+        await loadPlaceCategories();
+        return true;
+      }
+      setContentLoad(false);
     } catch (error) {
       setError(error);
       setContentLoad(false);
@@ -104,5 +122,6 @@ export default () => {
     changePosition,
     updatePlaceCategory,
     createPlaceCategory,
+    deletePlaceCategory,
   };
 };
