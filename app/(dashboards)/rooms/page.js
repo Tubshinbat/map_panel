@@ -200,7 +200,7 @@ const Page = () => {
       title: "Газар",
       status: true,
       render: (text, record) => {
-        return <Tag color="#2e3873"> {record.place.name} </Tag>;
+        return <Tag color="#2e3873"> {record.place && record.place.name} </Tag>;
       },
     },
 
