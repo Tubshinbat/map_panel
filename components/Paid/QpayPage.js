@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Form, Input, Button } from "antd";
-import PageNavItem from "components/Page/PagenavItem";
+import PageNavItem from "components/Page/PageNavItem";
 import { convertFromdata } from "lib/check";
 
 //Hooks

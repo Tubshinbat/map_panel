@@ -1,6 +1,6 @@
 "use client";
 import { Button, Form, Input, Modal, Switch, Tree, message } from "antd";
-import PageNavItem from "components/Page/PagenavItem";
+import PageNavItem from "components/Page/PageNavItem";
 import IconPicker from "react-icon-picker";
 
 //Context

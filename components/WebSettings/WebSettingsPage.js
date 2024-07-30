@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Form, Input, Button } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { OneImageDrag } from "components/Generals/ImageDrag";
-import PageNavItem from "components/Page/PagenavItem";
+import PageNavItem from "components/Page/PageNavItem";
 import { convertFromdata } from "lib/check";
 
 //Hooks

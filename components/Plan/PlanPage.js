@@ -17,7 +17,7 @@ import usePlan from "hooks/usePlan";
 // Lib
 import base from "lib/base";
 import { toastControl } from "lib/toastControl";
-import PageNavItem from "components/Page/PagenavItem";
+import PageNavItem from "components/Page/PageNavItem";
 
 // Init
 const requiredRule = {

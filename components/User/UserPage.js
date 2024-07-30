@@ -7,7 +7,7 @@ import Highlighter from "react-highlight-words";
 import moment from "moment";
 import useUser from "hooks/useUser";
 import Header from "components/Header/Header";
-import PageNavItem from "components/Page/PagenavItem";
+import PageNavItem from "components/Page/PageNavItem";
 import Side from "components/Side/Side";
 import base from "lib/base";
 import { toastControl } from "lib/toastControl";

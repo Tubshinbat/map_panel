@@ -1,7 +1,7 @@
 "use client";
 import { Button, Form, Input, Modal, Switch, Tree, message } from "antd";
 import { OneImageDrag } from "components/Generals/ImageDrag";
-import PageNavItem from "components/Page/PagenavItem";
+import PageNavItem from "components/Page/PageNavItem";
 import { useNotificationContext } from "context/notificationContext";
 import usePlaceCategories from "hooks/usePlaceCategories";
 import base from "lib/base";
