@@ -16,29 +16,29 @@ const CountBoxs = () => {
       const newsData = await getNewsCount();
 
       setUser({
-        styles: "text-bg-primary",
+        styles: "count-box tile-green",
         label: "Нийт хэрэглэгч",
         count: userData.data ? userData.data.data : 0,
         link: "/users",
-        icon: "solar:dollar-minimalistic-linear",
+        icon: "fa-solid fa-users",
         boxStyle: "primary-gradient",
       });
 
       setPlace({
-        styles: "text-bg-warning",
+        styles: "count-box tile-aqua",
         label: "Нийт газрууд",
         count: placeData.data ? placeData.data.count : 0,
         link: "/places",
-        icon: "solar:recive-twice-square-linear",
+        icon: "fa-solid fa-place-of-worship",
         boxStyle: "warning-gradient",
       });
 
       setNews({
-        styles: "text-bg-secondary",
+        styles: "count-box  tile-info",
         label: "Нийт мэдээлэл",
         count: newsData.data ? newsData.data.data : 0,
         link: "/news",
-        icon: "ri:news-line",
+        icon: "fa-solid fa-newspaper",
         boxStyle: "secondary-gradient",
       });
     };
@@ -48,14 +48,10 @@ const CountBoxs = () => {
 
   return (
     <div className="col-12">
-      <div className="card">
-        <div className="card-body pb-0" data-simplebar>
-          <div className="row flex-nowrap">
-            <CountBox data={user} />
-            <CountBox data={place} />
-            <CountBox data={news} />
-          </div>
-        </div>
+      <div className="row flex-nowrap">
+        <CountBox data={user} />
+        <CountBox data={place} />
+        <CountBox data={news} />
       </div>
     </div>
   );

@@ -1,76 +1,77 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import base from "lib/base";
-import AOS from "aos";
-import { getWebInfo } from "lib/webinfo";
-import { getMenus, renderMenu } from "lib/menu";
-import MobileMenu from "./MobileMenu";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faUserAlt } from "@fortawesome/free-solid-svg-icons";
-import { useAuthContext } from "context/authContext";
 
 const Header = () => {
-  const { user } = useAuthContext();
-  const [info, setInfo] = useState(null);
-  const [menu, setMenu] = useState([]);
-  const [phone, setPhone] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      const { info } = await getWebInfo();
-      if (info) {
-        setInfo(info);
-        setPhone(info.phone.split(","));
-      }
-      const { menus } = await getMenus();
-      menus && setMenu(menus);
-      AOS.init();
-    };
-
-    fetchData().catch((error) => console.log(error));
-  }, []);
-
   return (
-    <header className="top-header">
-      <div className="container main-header">
-        <div className="top-header-right">
-          <div className="header-logo">
-            {info && (
-              <Link href="/">
-                <img
-                  src={`${base.cdnUrl}/${info.logo}`}
-                  className="logo-image"
+    <nav className="main-header navbar navbar-expand navbar-white navbar-light">
+      {/* Left navbar links */}
+      <ul className="navbar-nav">
+        <li className="nav-item">
+          <a className="nav-link" data-widget="pushmenu" href="#" role="button">
+            <i className="fas fa-bars" />
+          </a>
+        </li>
+      </ul>
+      {/* Right navbar links */}
+      <ul className="navbar-nav ml-auto">
+        {/* Navbar Search */}
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            data-widget="navbar-search"
+            href="#"
+            role="button"
+          >
+            <i className="fas fa-search" />
+          </a>
+          <div className="navbar-search-block">
+            <form className="form-inline">
+              <div className="input-group input-group-sm">
+                <input
+                  className="form-control form-control-navbar"
+                  type="search"
+                  placeholder="Search"
+                  aria-label="Search"
                 />
-              </Link>
-            )}
+                <div className="input-group-append">
+                  <button className="btn btn-navbar" type="submit">
+                    <i className="fas fa-search" />
+                  </button>
+                  <button
+                    className="btn btn-navbar"
+                    type="button"
+                    data-widget="navbar-search"
+                  >
+                    <i className="fas fa-times" />
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-          <ul className="header-menus">{renderMenu(menu)}</ul>
-        </div>
-        <div className="top-header-left">
-          <form method="get" action="/search" className="search-box">
-            <input
-              className="search-input"
-              name="name"
-              placeholder="Хайлт хийх..."
-            />
-            <button className="search-btn" type="submit">
-              <FontAwesomeIcon icon={faSearch} />
-            </button>
-          </form>
-          <MobileMenu menus={menu} info={info} />
-          {!user ? (
-            <Link href="/login" className="user-header-btn">
-              <FontAwesomeIcon icon={faUserAlt} />
-            </Link>
-          ) : (
-            <Link href="/profile" className="user-header-btn">
-              <FontAwesomeIcon icon={faUserAlt} />
-            </Link>
-          )}
-        </div>
-      </div>
-    </header>
+        </li>
+
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            data-widget="fullscreen"
+            href="#"
+            role="button"
+          >
+            <i className="fas fa-expand-arrows-alt" />
+          </a>
+        </li>
+        <li className="nav-item">
+          <a
+            className="nav-link"
+            data-widget="control-sidebar"
+            data-controlsidebar-slide="true"
+            href="#"
+            role="button"
+          >
+            <i className="fa-solid fa-link"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
   );
 };
 

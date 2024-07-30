@@ -22,14 +22,22 @@ export const AuthProvider = ({ children }) => {
       }
     };
     checkLoginStatus();
+
+    // localStorage-оос хэрэглэгчийн өгөгдлийг сэргээх
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+      setIsLogin(true);
+    }
   }, []);
 
   const login = async (data) => {
     setContentLoad(true);
     try {
-      const result = await axios.post("users/login", data);
+      const result = await axios.post("/users/login", data);
       if (result) {
         setUser(result.data.user);
+        localStorage.setItem("user", JSON.stringify(result.data.user)); // localStorage-д хадгалах
         setIsLogin(true);
         setAlert("Амжилттай нэвтэрлээ");
         router.push("/dashboard");

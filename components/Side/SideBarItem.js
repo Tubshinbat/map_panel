@@ -11,17 +11,14 @@ const SideBarItem = ({ href, icon, label }) => {
   }
 
   return (
-    <li className={`sidebar-item `}>
-      <Link
-        className={`sidebar-link ${isActive ? "active" : ""}`}
-        href={href}
-        id="get-url"
-        aria-expanded="false"
-      >
-        <iconify-icon icon={icon} />
-        <span className="hide-menu">{label}</span>
-      </Link>
-    </li>
+    <>
+      <li className="nav-item">
+        <Link href={href} className={`nav-link ${isActive ? "active" : ""}`}>
+          <i className={`nav-icon ${icon}`} />
+          <p>{label}</p>
+        </Link>
+      </li>
+    </>
   );
 };
 

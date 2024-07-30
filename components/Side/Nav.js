@@ -57,6 +57,25 @@ const Nav = () => {
           icon={"lets-icons:order"}
           label={`Захиалга`}
         />
+
+        <SideBarItem
+          href="/users"
+          icon={"lets-icons:user"}
+          label={`Хэрэглэгчид`}
+        />
+        <li className="nav-small-cap">
+          <span className="hide-menu">Тохиргоо</span>
+        </li>
+        <SideBarItem
+          href="/web_settings"
+          icon={"material-symbols:settings"}
+          label={`Ерөнхий тохиргоо`}
+        />
+        <SideBarItem
+          href="/paid_type"
+          icon={"mdi:bank"}
+          label={`Төлбөрийн хэрэгсэл`}
+        />
       </ul>
     </nav>
   );

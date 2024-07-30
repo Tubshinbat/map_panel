@@ -2,7 +2,9 @@
 import { useToggleContext } from "context/toglleContext";
 import Link from "next/link";
 import { useState } from "react";
+import UserBox from "./Userbox";
 import Nav from "./Nav";
+import SideBarItem from "./SideBarItem";
 
 const Side = () => {
   const { handleToggleSideMenu } = useToggleContext();
@@ -11,53 +13,79 @@ const Side = () => {
   return (
     <>
       {/*  Sidebar Start */}
-      <aside className="side-mini-panel with-vertical">
-        <div className="iconbar">
-          <div className="mini-nav">
-            <div className="brand-logo d-flex align-items-center justify-content-center">
-              <a
-                className="nav-link sidebartoggler"
-                id="headerCollapse"
-                onClick={handleToggleSideMenu}
-              >
-                <iconify-icon
-                  icon="solar:hamburger-menu-line-duotone"
-                  className="fs-7"
-                />
-              </a>
-            </div>
-            <ul className="mini-nav-ul" data-simplebar>
-              <li
-                className={
-                  open == "dashboard"
-                    ? "mini-nav-item" + " selected"
-                    : "mini-nav-item"
-                }
-                id="mini-1"
-              >
-                <a
-                  data-bs-toggle="tooltip"
-                  data-bs-custom-className="custom-tooltip"
-                  data-bs-placement="right"
-                >
-                  <iconify-icon
-                    icon="solar:layers-line-duotone"
-                    className="fs-7"
-                  ></iconify-icon>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="sidebarmenu">
-          <div className="brand-logo d-flex align-items-center nav-logo">
-            <a href="/" className="text-nowrap logo-img">
-              <img src="/assets/images/logo.png" alt="Logo" />
-            </a>
-          </div>
+      <aside className="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="index3.html" className="brand-link">
+          <span className="brand-text font-weight-light">Админ удирдлага</span>
+        </a>
 
-          <Nav />
+        <div className="sidebar">
+          <UserBox />
+          <nav className="mt-2">
+            <ul
+              className="nav nav-pills nav-sidebar flex-column"
+              data-widget="treeview"
+              data-accordion="false"
+            >
+              <SideBarItem
+                href="/dashboard"
+                icon={"fa-solid fa-gauge-high"}
+                label={`Хянах самбар`}
+              />
+              <li className="nav-header">КОНТЕНТУУД</li>
+              <SideBarItem
+                href="/news"
+                icon={"fa-solid fa-newspaper"}
+                label={`Мэдээ мэдээлэл`}
+              />
+
+              <SideBarItem
+                href="/places"
+                icon={"fa-solid fa-layer-group"}
+                label={`Газрууд`}
+              />
+              <SideBarItem
+                href="/rooms"
+                icon={"fa-solid fa-house-user"}
+                label={`Өрөөнүүд`}
+              />
+              <li className="nav-header">ДАТА</li>
+              <SideBarItem
+                href="/plans"
+                icon={"fa-regular fa-clipboard"}
+                label={`Багц`}
+              />
+              <SideBarItem
+                href="/rates"
+                icon={"fa-solid fa-star-half-stroke"}
+                label={`Үнэлгээнүүд`}
+              />
+              <SideBarItem
+                href="/orders"
+                icon={"fa-solid fa-boxes-stacked"}
+                label={`Захиалга`}
+              />
+
+              <SideBarItem
+                href="/users"
+                icon={"fa-solid fa-users"}
+                label={`Хэрэглэгчид`}
+              />
+              <li className="nav-header">ТОХИРГОО</li>
+              <SideBarItem
+                href="/web_settings"
+                icon={"fa-solid fa-gear"}
+                label={`Ерөнхий тохиргоо`}
+              />
+              <SideBarItem
+                href="/paid_type"
+                icon={"fa-solid fa-wallet"}
+                label={`Төлбөрийн хэрэгсэл`}
+              />
+            </ul>
+          </nav>
+          {/* /.sidebar-menu */}
         </div>
+        {/* /.sidebar */}
       </aside>
       {/*  Sidebar End */}
     </>
