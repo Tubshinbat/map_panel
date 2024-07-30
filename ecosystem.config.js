@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "master-cms-portal",
+      name: "map-cms-panel",
       script: "npm start",
       autorestart: true,
       env: {
