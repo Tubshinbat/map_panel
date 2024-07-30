@@ -1,0 +1,18 @@
+[{
+  "_id": {
+    "$oid": "62823833d593e57b27da3fff"
+  },
+  "email": "info@emap.mn",
+  "phone": [
+    77777717
+  ],
+  "name": "emap.mn",
+  "address": "emap.mn",
+  "siteInfo": "emap.mn",
+  "policy": "<p class=\"aos-init aos-animate\" data-aos=\"fade-in\" data-aos-duration=\"2300\">emap.mnf asf</p>",
+  "logo": "1722231498328_Screenshot 2024-07-04 011458.png",
+  "whiteLogo": "1722231573232_Screenshot 2024-07-08 103713.png",
+  "updateAt": {
+    "$date": "2022-05-16T11:43:35.923Z"
+  }
+}]
