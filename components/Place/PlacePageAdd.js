@@ -427,7 +427,7 @@ const Page = () => {
                       </div>
                       <div className="col-md-5">
                         <Form.Item
-                          name="long"
+                          name="lng"
                           label="Уртраг"
                           className="dark-input"
                           rules={[requiredRule]}
