@@ -11,20 +11,12 @@ import {
 } from "antd";
 
 import { Editor } from "@tinymce/tinymce-react";
-import { slugify } from "transliteration";
-
-// Components
-import TemplateSettings from "components/Generals/TemplateSettings";
-import Header from "components/Header/Header";
-import Side from "components/Side/Side";
 
 // Hooks
 import usePlace from "hooks/usePlace";
 import { useNotificationContext } from "context/notificationContext";
 
 // Lib
-import { menuGenerateData } from "lib/menuGenerate";
-import { buildFileInput, deleteImage, uploadImage } from "lib/files";
 import ImageDrag from "components/Generals/ImageDrag";
 import useRoom from "hooks/useRoom";
 import { useRouter } from "next/navigation";

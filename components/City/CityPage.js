@@ -7,18 +7,11 @@ import moment from "moment";
 
 //Context
 import { useNotificationContext } from "context/notificationContext";
-import usePlace from "hooks/usePlace";
+import useCity from "hooks/useCity";
 
 // Lib
-import base from "lib/base";
 import { toastControl } from "lib/toastControl";
 import PageNavItem from "components/Page/PageNavItem";
-
-// Init
-const requiredRule = {
-  required: true,
-  message: "Тус талбарыг заавал бөглөнө үү",
-};
 
 const Page = () => {
   const searchInput = useRef(null);
@@ -27,7 +20,7 @@ const Page = () => {
   const { contentLoad } = useNotificationContext();
   // States
   const [querys, setQuerys] = useState();
-  const { places, pagination, loadPlace, deletePlace } = usePlace();
+  const { cities, pagination, loadCity, deleteCity } = useCity();
   const [data, setData] = useState([]);
 
   // -- Table states
@@ -128,202 +121,28 @@ const Page = () => {
 
   const [columns, setColumns] = useState([
     {
-      dataIndex: "status",
-      key: "status",
-      title: "Төлөв",
-      status: true,
-
-      filters: [
-        {
-          text: "Нийтлэгдсэн",
-          value: "true",
-        },
-        {
-          text: "Ноорог",
-          value: "false",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "star",
-      key: "star",
-      title: "Онцлох",
-      status: true,
-
-      filters: [
-        {
-          text: "Онцгойлсон",
-          value: "true",
-        },
-        {
-          text: "Онцгой биш",
-          value: "false",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "isAddress",
-      key: "isAddress",
-      title: "Хаяг",
-      status: true,
-
-      filters: [
-        {
-          text: "Хаягын мэдээлэл",
-          value: "true",
-        },
-        {
-          text: "Газрын мэдээлэл",
-          value: "false",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
-    {
       dataIndex: "name",
       key: "name",
-      title: "Байршилын нэр",
+      title: "Хот/Аймгийн нэр",
       status: true,
       ...getColumnSearchProps("name"),
       sorter: (a, b) => handleSort(),
     },
+
     {
       dataIndex: "engName",
       key: "engName",
-      title: "Англи хэл дээр",
-      status: true,
+      title: "Англи нэр",
+      status: false,
       ...getColumnSearchProps("engName"),
       sorter: (a, b) => handleSort(),
     },
+
     {
-      dataIndex: "pictures",
-      key: "pictures",
-      title: "Зураг",
-      status: false,
-      render: (text, record) => {
-        return (
-          <div className="table-image">
-            {record.pictures && record.pictures.length > 0 ? (
-              <img src={`${base.cdnUrl}/150x150/${record.pictures[0]}`} />
-            ) : (
-              "Зураг оруулаагүй байна"
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      dataIndex: "logo",
-      key: "logo",
-      title: "Лого",
+      dataIndex: "polygon",
+      key: "polygon",
+      title: "Полигон",
       status: true,
-      render: (text, record) => {
-        return (
-          <div className="table-image">
-            {record.logo ? (
-              <img src={`${base.cdnUrl}/150x150/${record.logo}`} />
-            ) : (
-              "Зураг оруулаагүй байна"
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      dataIndex: "services",
-      key: "services",
-      title: "Үйлчилгээнүүд",
-      status: false,
-      render: (text, record) => {
-        return (
-          record.services &&
-          record.services.map((el) => <Tag color="#2e3873"> {el.name} </Tag>)
-        );
-      },
-    },
-    {
-      dataIndex: "coordinates",
-      key: "coordinates",
-      title: "Координатууд",
-      status: true,
-    },
-    {
-      dataIndex: "addressText",
-      key: "addressText",
-      title: "Хаяг",
-      status: false,
-      render: (text, record) => {
-        return (
-          record.addressText &&
-          record.addressText.map((el) => <Tag color="#2e3873"> {el.name} </Tag>)
-        );
-      },
-    },
-    {
-      dataIndex: "address_kh",
-      key: "address_kh",
-      title: "address_kh",
-      status: false,
-      ...getColumnSearchProps("address_kh"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "address_st",
-      key: "address_st",
-      title: "Гудамж",
-      status: false,
-      ...getColumnSearchProps("address_st"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "address_ne",
-      key: "address_ne",
-      title: "Хаягын нэр дэлгэрэнгүй",
-      status: false,
-      ...getColumnSearchProps("address_ne"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "cityProvince",
-      key: "cityProvince",
-      title: "Хот/аймаг",
-      status: false,
-      ...getColumnSearchProps("cityProvince"),
-    },
-    {
-      dataIndex: "district",
-      key: "district",
-      title: "Аймаг/Дүүрэг",
-      status: false,
-      ...getColumnSearchProps("district"),
-    },
-    {
-      dataIndex: "khoroo",
-      key: "khoroo",
-      title: "Баг/Хороо",
-      status: false,
-      ...getColumnSearchProps("khoroo"),
-    },
-    {
-      dataIndex: "categories",
-      key: "categories",
-      title: "Ангилал",
-      status: true,
-      render: (text, record) => {
-        return record.categories.map((el) => (
-          <Tag color="#2e3873">{el.name}</Tag>
-        ));
-      },
-    },
-    {
-      dataIndex: "views",
-      key: "views",
-      title: "Нийт үзсэн",
-      status: false,
-      ...getColumnSearchProps("views"),
-      sorter: (a, b) => handleSort(),
     },
 
     {
@@ -373,7 +192,7 @@ const Page = () => {
   const handleEdit = () => {
     if (selectedRowKeys.length != 1)
       toastControl("error", "Нэг өгөгдөл сонгоно уу");
-    else router.push(`/places/edit/${selectedRowKeys[0]}`);
+    else router.push(`/city-province/edit/${selectedRowKeys[0]}`);
   };
 
   const handleSort = () => {};
@@ -467,7 +286,7 @@ const Page = () => {
       }
       case "edit": {
         if (selectedRowKeys && selectedRowKeys.length === 1) {
-          router.push("/places/edit/" + selectedRowKeys[0]);
+          router.push("/city-province/edit/" + selectedRowKeys[0]);
         } else {
           toastControl("error", "Нэг өгөгдөл сонгоно уу");
         }
@@ -491,7 +310,7 @@ const Page = () => {
   };
 
   const handleDelete = async () => {
-    await deletePlace(selectedRowKeys);
+    await deleteCity(selectedRowKeys);
     handleCancel();
     setSelectedRowKeys([]);
   };
@@ -504,7 +323,7 @@ const Page = () => {
         },
       },
     }));
-    await loadPlace();
+    await loadCity();
     setSearchText(() => "");
     setSearchedColumn("");
   };
@@ -515,28 +334,21 @@ const Page = () => {
   }, [columns]);
 
   useEffect(() => {
-    if (places) {
+    if (cities) {
       const refData = [];
 
-      Array.isArray(places) > 0 &&
-        places.map((el) => {
+      Array.isArray(cities) > 0 &&
+        cities.map((el) => {
           const key = el._id;
           delete el._id;
           el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
           el.star = el.star == true ? "Онцгойлсон" : "Энгийн";
-          el.coordinates = el.location
-            ? JSON.stringify(el.location.coordinates)
-            : "координатууд олдсонгүй";
 
-          el.cityProvince =
-            (el.cityProvince && el.cityProvince.name) || "Өгөгдөл байхгүй";
+          el.polygon =
+            el.polygon &&
+            el.polygon.properties &&
+            `${el.polygon.properties.name} / ${el.polygon.properties.code} /`;
 
-          el.district = (el.district && el.district.name) || "Өгөгдөл байхгүй";
-
-          el.khoroo = (el.khoroo && el.khoroo.name) || "Өгөгдөл байхгүй";
-
-          el.isAddress =
-            el.isAddress == true ? "Хаягын мэдээлэл" : "Газрын мэдээлэл";
           el.createUser = el.createUser && el.createUser.firstName;
           el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
@@ -557,7 +369,7 @@ const Page = () => {
 
       setData(refData);
     }
-  }, [places]);
+  }, [cities]);
 
   useEffect(() => {
     if (pagination) {
@@ -573,7 +385,7 @@ const Page = () => {
 
   useEffect(() => {
     const fetcData = async (query) => {
-      await loadPlace(query);
+      await loadCity(query);
     };
     if (querys) {
       const query = queryBuild();
@@ -589,7 +401,7 @@ const Page = () => {
         <div className="container-fluid">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1>Газрууд</h1>
+              <h1>Хот/Аймаг</h1>
             </div>
           </div>
         </div>
@@ -602,10 +414,10 @@ const Page = () => {
               <div className="col-12">
                 <div className="d-sm-flex align-items-center justify-space-between">
                   <nav className="page-nav ">
-                    <PageNavItem label="Газрууд" link="/places" />
+                    <PageNavItem label="Газрууд" link="/city-province" />
                     <PageNavItem
-                      label="Газруудын ангилал"
-                      link="/place-categories"
+                      label="Дэс дараалал"
+                      link="/city-province/position"
                     />
                   </nav>
                 </div>
@@ -616,7 +428,7 @@ const Page = () => {
             <div className="datatable-header-tools">
               <div className="datatable-actions">
                 <Button
-                  onClick={() => router.push(`/places/add`)}
+                  onClick={() => router.push(`/city-province/add`)}
                   className="datatable-action add-bg"
                 >
                   <i className="fa fa-plus"></i> Нэмэх

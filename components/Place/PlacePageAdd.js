@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
   Form,
@@ -7,31 +7,33 @@ import {
   Modal,
   Switch,
   Tree,
-  Upload,
   message,
+  Tag,
+  theme,
+  Select,
 } from "antd";
-import { AppstoreAddOutlined } from "@ant-design/icons";
+import { AppstoreAddOutlined, PlusOutlined } from "@ant-design/icons";
 import IconPicker from "react-icon-picker";
+import { TweenOneGroup } from "rc-tween-one";
+import { useRouter } from "next/navigation";
 
-import axios from "axios-base";
 import { Editor } from "@tinymce/tinymce-react";
-
-// Components
-import TemplateSettings from "components/Generals/TemplateSettings";
-import Header from "components/Header/Header";
-import Side from "components/Side/Side";
 
 // Hooks
 import usePlaceCategories from "hooks/usePlaceCategories";
 import { useNotificationContext } from "context/notificationContext";
+import useCity from "hooks/useCity";
+import useDistrict from "hooks/useDistrict";
+import useKhoroo from "hooks/useKhoroo";
+import usePlace from "hooks/usePlace";
 
 // Lib
 import { menuGenerateData } from "lib/menuGenerate";
-import { buildFileInput, deleteImage, uploadImage } from "lib/files";
-import ImageDrag, { OneImageDrag } from "components/Generals/ImageDrag";
-import { useRouter } from "next/navigation";
+import { deleteImage, uploadImage } from "lib/files";
 import { convertFromdata } from "lib/check";
-import usePlace from "hooks/usePlace";
+
+// Components
+import ImageDrag, { OneImageDrag } from "components/Generals/ImageDrag";
 import ServiceItem from "components/Generals/ServiceItem";
 import MapModal from "components/Modal/MapModal";
 
@@ -145,12 +147,30 @@ const icons = [
 ];
 
 const Page = () => {
+  const inputRef = useRef(null);
+  const { token } = theme.useToken();
   const [form] = Form.useForm();
   const [modalForm] = Form.useForm();
   const router = useRouter();
   const [markerPosition, setMarkerPosition] = useState(null);
   const { contentLoad } = useNotificationContext();
   const { createPlace } = usePlace();
+  const { placeCategories } = usePlaceCategories();
+  const { loadCity, cities } = useCity();
+  const { loadDistrict, districts } = useDistrict();
+  const { loadKhoroo, khoroos } = useKhoroo();
+
+  // Usestate
+  const [selectCity, setSelectCity] = useState(null);
+  const [selectDistrict, setSelectDistrict] = useState(null);
+  const [selectKhoroo, setSelectKhoroo] = useState(null);
+  const [cityData, setCityData] = useState([]);
+  const [districtData, setDistrictData] = useState([]);
+  const [khorooData, setKhorooData] = useState([]);
+  const [checkedKeys, setCheckedKeys] = useState([]);
+  const [inputVisible, setInputVisible] = useState(false);
+  const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   const [pictures, setPictures] = useState([]);
   const [photo, setPhoto] = useState(null);
   const [visible, setVisible] = useState({
@@ -163,22 +183,63 @@ const Page = () => {
   const [checkedRadio, setCheckedRadio] = useState({
     status: true,
     star: false,
+    isAddress: false,
   });
-  const { placeCategories } = usePlaceCategories();
-  const [checkedKeys, setCheckedKeys] = useState([]);
 
   // Config init
 
   useEffect(() => {
     modalForm.setFieldsValue({ icon: "fas fa-sun" });
+    (async () => {
+      await loadCity();
+    })();
     return () => clear();
   }, []);
+
+  useEffect(() => {
+    if (inputVisible) {
+      inputRef.current?.focus();
+    }
+  }, [inputVisible]);
 
   useEffect(() => {
     if (placeCategories) {
       setGData(menuGenerateData(placeCategories));
     }
   }, [placeCategories]);
+
+  useEffect(() => {
+    if (cities) {
+      setCityData(() =>
+        cities.map((el) => ({
+          value: el._id,
+          label: el.name,
+        }))
+      );
+    }
+  }, [cities]);
+
+  useEffect(() => {
+    if (districts) {
+      setDistrictData(() =>
+        districts.map((el) => ({
+          value: el._id,
+          label: el.name,
+        }))
+      );
+    }
+  }, [districts]);
+
+  useEffect(() => {
+    if (khoroos) {
+      setKhorooData(() =>
+        khoroos.map((el) => ({
+          value: el._id,
+          label: el.name,
+        }))
+      );
+    }
+  }, [khoroos]);
 
   // Handle functions
   const handleEditor = (event) => {
@@ -195,19 +256,26 @@ const Page = () => {
     if (Array.isArray(services) && services.length > 0)
       values.services = JSON.stringify(services);
 
+    if (Array.isArray(tags) && tags.length > 0)
+      values.addressText = JSON.stringify(tags);
+
     if (photo) values.logo = photo.name;
+
+    const coordinates = [values.lng, values.lat];
+    delete values.lat;
+    delete values.lng;
 
     const data = {
       ...values,
       star: checkedRadio.star || false,
       status: checkedRadio.status || true,
+      isAddress: checkedRadio.isAddress || false,
       categories: [...checkedKeys],
+      type: "Point",
+      coordinates,
     };
 
     if (data.categories.length <= 0) delete data.categories;
-
-    console.log(data);
-
     const sendData = convertFromdata(data);
     const result = await createPlace(sendData);
     if (result)
@@ -233,6 +301,51 @@ const Page = () => {
     setGData([]);
     deletePictures.map(async (el) => await deleteImage(el));
     pictures.map(async (el) => await deleteImage(el.name));
+  };
+
+  const handleClose = (removedTag) => {
+    const newTags = tags.filter((tag) => tag !== removedTag);
+    setTags(newTags);
+  };
+  const showInput = () => {
+    setInputVisible(true);
+  };
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleInputConfirm = () => {
+    if (inputValue && tags.indexOf(inputValue) === -1) {
+      setTags([...tags, inputValue]);
+    }
+    setInputVisible(false);
+    setInputValue("");
+  };
+
+  const forMap = (tag) => (
+    <span
+      key={tag}
+      style={{
+        display: "inline-block",
+      }}
+    >
+      <Tag
+        closable
+        onClose={(e) => {
+          e.preventDefault();
+          handleClose(tag);
+        }}
+      >
+        {tag}
+      </Tag>
+    </span>
+  );
+
+  const tagChild = tags.map(forMap);
+  const tagPlusStyle = {
+    background: token.colorBgContainer,
+    borderStyle: "dashed",
   };
 
   // -- TREE FUNCTIONS
@@ -272,6 +385,39 @@ const Page = () => {
     setVisible((bprev) => ({ ...bprev, map: false, service: false }));
   };
 
+  const handleSearchDistrict = async (input) => {
+    await loadDistrict(`all=true&name=${input}&cityId=${selectCity}`);
+  };
+
+  const handleSearchCity = async (input) => {
+    await loadCity(`all=true&name=${input}`);
+  };
+
+  const handleSearchKhoroo = async (input) => {
+    await loadKhoroo(
+      `all=true&name=${input}&cityId=${selectCity}&districtId=${selectDistrict}`
+    );
+  };
+
+  const handleSelectCity = async (selectId) => {
+    if (selectId) {
+      setSelectCity(selectId);
+      await loadDistrict(`cityId=${selectId}`);
+    }
+    setSelectKhoroo(null);
+    setSelectDistrict(null);
+    form.setFieldsValue({ district: null, khoroo: null });
+  };
+
+  const handleSelectDistrict = async (selectId) => {
+    if (selectId) {
+      setSelectDistrict(selectId);
+      await loadKhoroo(`cityId=${selectCity}&districtId=${selectId}`);
+    }
+    setSelectKhoroo(null);
+    form.setFieldsValue({ khoroo: null });
+  };
+
   return (
     <>
       <section className="content-header">
@@ -297,7 +443,7 @@ const Page = () => {
                   </div>
                   <div className=" card-body py-3">
                     <div className="row">
-                      <div className="col-12">
+                      <div className="col-md-12">
                         <Form.Item
                           label="Газрын нэршил"
                           name="name"
@@ -308,7 +454,17 @@ const Page = () => {
                           <Input placeholder="Газрын нэршил оруулна уу" />
                         </Form.Item>
                       </div>
-                      <div className="col-12">
+                      <div className="col-md-12">
+                        <Form.Item
+                          label="Газрын нэршил Англи хэл дээр"
+                          name="engName"
+                          rules={[requiredRule]}
+                          hasFeedback
+                        >
+                          <Input placeholder="Газрын Англи нэршил оруулна уу" />
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-12">
                         <Form.Item
                           label="Дэлгэрэнгүй"
                           name="about"
@@ -353,7 +509,7 @@ const Page = () => {
                           />
                         </Form.Item>
                       </div>
-                      <div className="col-12">
+                      <div className="col-md-12">
                         <Form.Item label="Үйлчилгээнүүд">
                           <Button
                             className="service-btn"
@@ -373,46 +529,6 @@ const Page = () => {
                             />
                           ))}
                         </div>
-                      </div>
-                      <div className="col-md-12">
-                        <Form.Item
-                          label="Хаягын мэдээлэл"
-                          name="addressText"
-                          className="dark-input"
-                          hasFeedback
-                        >
-                          <Input placeholder="Хаягын дэлгэрэнгүй мэдээллийг оруулна уу" />
-                        </Form.Item>
-                      </div>
-                      <div className="col-md-6">
-                        <Form.Item
-                          label="Address_kh"
-                          name="address_kh"
-                          className="dark-input"
-                          hasFeedback
-                        >
-                          <Input placeholder="Address_kh оруулна уу" />
-                        </Form.Item>
-                      </div>
-                      <div className="col-md-6">
-                        <Form.Item
-                          label="Address_ne"
-                          name="address_ne"
-                          className="dark-input"
-                          hasFeedback
-                        >
-                          <Input placeholder="Address_ne оруулна уу" />
-                        </Form.Item>
-                      </div>
-                      <div className="col-md-12">
-                        <Form.Item
-                          label="Гудамжын мэдээлэл"
-                          name="address_st"
-                          className="dark-input"
-                          hasFeedback
-                        >
-                          <Input placeholder="Гудамжын мэдээлэл оруулна уу" />
-                        </Form.Item>
                       </div>
                       <div className="col-md-5">
                         <Form.Item
@@ -445,6 +561,131 @@ const Page = () => {
                             size="large"
                             onClick={() => showModal("map")}
                           ></Button>
+                        </Form.Item>
+                      </div>
+
+                      <div className="col-md-12">
+                        <Form.Item
+                          label="Хаягын мэдээлэл"
+                          className="dark-input"
+                          hasFeedback
+                          extra="Хэрэглэгч тухайн хаягыг хайхад туслах түлхүүр хаягуудыг оруулана уу. Жишээ: Төв номын сан, Сталингын номын сан, tuv nomiin san г.мэт"
+                        >
+                          <div
+                            style={{
+                              marginBottom: 16,
+                            }}
+                          >
+                            <TweenOneGroup
+                              appear={false}
+                              enter={{
+                                scale: 0.8,
+                                opacity: 0,
+                                type: "from",
+                                duration: 100,
+                              }}
+                              leave={{
+                                opacity: 0,
+                                width: 0,
+                                scale: 0,
+                                duration: 200,
+                              }}
+                              onEnd={(e) => {
+                                if (e.type === "appear" || e.type === "enter") {
+                                  e.target.style = "display: inline-block";
+                                }
+                              }}
+                            >
+                              {tagChild}
+                            </TweenOneGroup>
+                          </div>
+                          {inputVisible ? (
+                            <Input
+                              ref={inputRef}
+                              type="text"
+                              size="small"
+                              style={{
+                                width: 78,
+                              }}
+                              value={inputValue}
+                              onChange={handleInputChange}
+                              onBlur={handleInputConfirm}
+                              onPressEnter={handleInputConfirm}
+                            />
+                          ) : (
+                            <Tag onClick={showInput} style={tagPlusStyle}>
+                              <PlusOutlined /> Хаяг оруулах
+                            </Tag>
+                          )}
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-4">
+                        <Form.Item
+                          label="Хот/аймаг"
+                          name="cityProvince"
+                          hasFeedback
+                        >
+                          <Select
+                            showSearch
+                            placeholder="Хот/аймгуудаас сонгох"
+                            filterOption={false}
+                            onSearch={handleSearchCity}
+                            options={cityData}
+                            onSelect={handleSelectCity}
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-4">
+                        <Form.Item
+                          label="Сум/Дүүрэг"
+                          name="district"
+                          hasFeedback
+                        >
+                          <Select
+                            showSearch
+                            placeholder="Сум дүүргээс сонгоно уу"
+                            filterOption={false}
+                            onSearch={handleSearchDistrict}
+                            options={districtData}
+                            disabled={districts.length <= 0 || !selectCity}
+                            onSelect={handleSelectDistrict}
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-4">
+                        <Form.Item label="Баг/Хороо" name="khoroo" hasFeedback>
+                          <Select
+                            showSearch
+                            placeholder="Баг хорооноос сонгоно уу"
+                            filterOption={false}
+                            onSearch={handleSearchKhoroo}
+                            options={khorooData}
+                            disabled={
+                              khorooData.length <= 0 ||
+                              !selectCity ||
+                              !selectDistrict
+                            }
+                          />
+                        </Form.Item>
+                      </div>
+
+                      <div className="col-md-6">
+                        <Form.Item
+                          label="Гудамжын мэдээлэл"
+                          name="address_st"
+                          className="dark-input"
+                          hasFeedback
+                        >
+                          <Input placeholder="Гудамжын мэдээлэл оруулна уу" />
+                        </Form.Item>
+                      </div>
+                      <div className="col-md-6">
+                        <Form.Item
+                          label="Ойролцоо хаягын мэдээлэл"
+                          name="vicinity"
+                          hasFeedback
+                        >
+                          <Input placeholder="Жишээ нь: Энхтайван өргөн чөлөө ний гудамж" />
                         </Form.Item>
                       </div>
                     </div>
@@ -527,6 +768,19 @@ const Page = () => {
                         size="small"
                         checked={checkedRadio.star}
                         onChange={(checked) => handleRadio(checked, "star")}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Хаягийн хайлтанд"
+                      className="dark-input switch-input"
+                      name="isAddress"
+                    >
+                      <Switch
+                        size="small"
+                        checked={checkedRadio.isAddress}
+                        onChange={(checked) =>
+                          handleRadio(checked, "isAddress")
+                        }
                       />
                     </Form.Item>
                   </div>

@@ -457,7 +457,6 @@ input::placeholder {
 
 .ant-upload-list-item-container {
   margin-top: 10px;
-  color: #fff;
 }
 
 .ant-upload-wrapper
@@ -527,15 +526,13 @@ input::placeholder {
 }
 
 .icon-picker .ant-form-item-control-input-content div {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 }
 
 .service-items {
   display: flex;
   flex-direction: row;
   gap: 5px;
+  flex-wrap: wrap;
 }
 
 .service-item {

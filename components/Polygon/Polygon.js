@@ -5,9 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import moment from "moment";
 
+//Components
+import TemplateSettings from "components/Generals/TemplateSettings";
+import Header from "components/Header/Header";
+import Side from "components/Side/Side";
+
 //Context
 import { useNotificationContext } from "context/notificationContext";
-import usePlace from "hooks/usePlace";
+import usePolygon from "hooks/usePolygon";
 
 // Lib
 import base from "lib/base";
@@ -22,12 +27,12 @@ const requiredRule = {
 
 const Page = () => {
   const searchInput = useRef(null);
-
   const router = useRouter();
   const { contentLoad } = useNotificationContext();
+
   // States
   const [querys, setQuerys] = useState();
-  const { places, pagination, loadPlace, deletePlace } = usePlace();
+  const { polygons, pagination, loadPolygon, deletePolygon } = usePolygon();
   const [data, setData] = useState([]);
 
   // -- Table states
@@ -40,6 +45,7 @@ const Page = () => {
       current: 1,
     },
   });
+
   // -- Modal states
   const [visible, setVisible] = useState({
     delete: false,
@@ -128,201 +134,43 @@ const Page = () => {
 
   const [columns, setColumns] = useState([
     {
-      dataIndex: "status",
-      key: "status",
-      title: "Төлөв",
+      dataIndex: "code",
+      key: "code",
+      title: "Код",
       status: true,
-
-      filters: [
-        {
-          text: "Нийтлэгдсэн",
-          value: "true",
-        },
-        {
-          text: "Ноорог",
-          value: "false",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "star",
-      key: "star",
-      title: "Онцлох",
-      status: true,
-
-      filters: [
-        {
-          text: "Онцгойлсон",
-          value: "true",
-        },
-        {
-          text: "Онцгой биш",
-          value: "false",
-        },
-      ],
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "isAddress",
-      key: "isAddress",
-      title: "Хаяг",
-      status: true,
-
-      filters: [
-        {
-          text: "Хаягын мэдээлэл",
-          value: "true",
-        },
-        {
-          text: "Газрын мэдээлэл",
-          value: "false",
-        },
-      ],
+      ...getColumnSearchProps("code"),
       sorter: (a, b) => handleSort(),
     },
     {
       dataIndex: "name",
       key: "name",
-      title: "Байршилын нэр",
+      title: "Полигоны нэр",
       status: true,
       ...getColumnSearchProps("name"),
       sorter: (a, b) => handleSort(),
     },
     {
-      dataIndex: "engName",
-      key: "engName",
-      title: "Англи хэл дээр",
+      dataIndex: "area_m2",
+      key: "area_m2",
+      title: "Эзлэх м2",
       status: true,
-      ...getColumnSearchProps("engName"),
+      ...getColumnSearchProps("area_m2"),
       sorter: (a, b) => handleSort(),
     },
     {
-      dataIndex: "pictures",
-      key: "pictures",
-      title: "Зураг",
-      status: false,
-      render: (text, record) => {
-        return (
-          <div className="table-image">
-            {record.pictures && record.pictures.length > 0 ? (
-              <img src={`${base.cdnUrl}/150x150/${record.pictures[0]}`} />
-            ) : (
-              "Зураг оруулаагүй байна"
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      dataIndex: "logo",
-      key: "logo",
-      title: "Лого",
+      dataIndex: "au1_code",
+      key: "au1_code",
+      title: "au1_code",
       status: true,
-      render: (text, record) => {
-        return (
-          <div className="table-image">
-            {record.logo ? (
-              <img src={`${base.cdnUrl}/150x150/${record.logo}`} />
-            ) : (
-              "Зураг оруулаагүй байна"
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      dataIndex: "services",
-      key: "services",
-      title: "Үйлчилгээнүүд",
-      status: false,
-      render: (text, record) => {
-        return (
-          record.services &&
-          record.services.map((el) => <Tag color="#2e3873"> {el.name} </Tag>)
-        );
-      },
-    },
-    {
-      dataIndex: "coordinates",
-      key: "coordinates",
-      title: "Координатууд",
-      status: true,
-    },
-    {
-      dataIndex: "addressText",
-      key: "addressText",
-      title: "Хаяг",
-      status: false,
-      render: (text, record) => {
-        return (
-          record.addressText &&
-          record.addressText.map((el) => <Tag color="#2e3873"> {el.name} </Tag>)
-        );
-      },
-    },
-    {
-      dataIndex: "address_kh",
-      key: "address_kh",
-      title: "address_kh",
-      status: false,
-      ...getColumnSearchProps("address_kh"),
+      ...getColumnSearchProps("au1_code"),
       sorter: (a, b) => handleSort(),
     },
     {
-      dataIndex: "address_st",
-      key: "address_st",
-      title: "Гудамж",
-      status: false,
-      ...getColumnSearchProps("address_st"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "address_ne",
-      key: "address_ne",
-      title: "Хаягын нэр дэлгэрэнгүй",
-      status: false,
-      ...getColumnSearchProps("address_ne"),
-      sorter: (a, b) => handleSort(),
-    },
-    {
-      dataIndex: "cityProvince",
-      key: "cityProvince",
-      title: "Хот/аймаг",
-      status: false,
-      ...getColumnSearchProps("cityProvince"),
-    },
-    {
-      dataIndex: "district",
-      key: "district",
-      title: "Аймаг/Дүүрэг",
-      status: false,
-      ...getColumnSearchProps("district"),
-    },
-    {
-      dataIndex: "khoroo",
-      key: "khoroo",
-      title: "Баг/Хороо",
-      status: false,
-      ...getColumnSearchProps("khoroo"),
-    },
-    {
-      dataIndex: "categories",
-      key: "categories",
-      title: "Ангилал",
+      dataIndex: "au2_code",
+      key: "au2_code",
+      title: "au2_code",
       status: true,
-      render: (text, record) => {
-        return record.categories.map((el) => (
-          <Tag color="#2e3873">{el.name}</Tag>
-        ));
-      },
-    },
-    {
-      dataIndex: "views",
-      key: "views",
-      title: "Нийт үзсэн",
-      status: false,
-      ...getColumnSearchProps("views"),
+      ...getColumnSearchProps("au2_code"),
       sorter: (a, b) => handleSort(),
     },
 
@@ -373,7 +221,7 @@ const Page = () => {
   const handleEdit = () => {
     if (selectedRowKeys.length != 1)
       toastControl("error", "Нэг өгөгдөл сонгоно уу");
-    else router.push(`/places/edit/${selectedRowKeys[0]}`);
+    else window.open(`/polygon/edit/${selectedRowKeys[0]}`, "_blank");
   };
 
   const handleSort = () => {};
@@ -491,7 +339,7 @@ const Page = () => {
   };
 
   const handleDelete = async () => {
-    await deletePlace(selectedRowKeys);
+    await deletePolygon(selectedRowKeys);
     handleCancel();
     setSelectedRowKeys([]);
   };
@@ -504,7 +352,7 @@ const Page = () => {
         },
       },
     }));
-    await loadPlace();
+    await loadPolygon();
     setSearchText(() => "");
     setSearchedColumn("");
   };
@@ -515,28 +363,20 @@ const Page = () => {
   }, [columns]);
 
   useEffect(() => {
-    if (places) {
+    if (polygons) {
       const refData = [];
 
-      Array.isArray(places) > 0 &&
-        places.map((el) => {
+      Array.isArray(polygons) > 0 &&
+        polygons.map((el) => {
           const key = el._id;
           delete el._id;
-          el.status = el.status == true ? "Нийтлэгдсэн" : "Ноорог";
-          el.star = el.star == true ? "Онцгойлсон" : "Энгийн";
-          el.coordinates = el.location
-            ? JSON.stringify(el.location.coordinates)
-            : "координатууд олдсонгүй";
+          const { name, area_m2, au1_code, au2_code, code } = el.properties;
 
-          el.cityProvince =
-            (el.cityProvince && el.cityProvince.name) || "Өгөгдөл байхгүй";
-
-          el.district = (el.district && el.district.name) || "Өгөгдөл байхгүй";
-
-          el.khoroo = (el.khoroo && el.khoroo.name) || "Өгөгдөл байхгүй";
-
-          el.isAddress =
-            el.isAddress == true ? "Хаягын мэдээлэл" : "Газрын мэдээлэл";
+          el.name = name;
+          el.area_m2 = area_m2;
+          el.au1_code = au1_code;
+          el.au2_code = au2_code;
+          el.code = code;
           el.createUser = el.createUser && el.createUser.firstName;
           el.updateUser = el.updateUser && el.updateUser.firstName;
           el.createAt = moment(el.createAt)
@@ -545,8 +385,6 @@ const Page = () => {
           el.updateAt = moment(el.updateAt)
             .utcOffset("+0800")
             .format("YYYY-MM-DD HH:mm:ss");
-
-          el.categories = el.categories;
 
           refData.push({
             dataIndex: key,
@@ -557,7 +395,7 @@ const Page = () => {
 
       setData(refData);
     }
-  }, [places]);
+  }, [polygons]);
 
   useEffect(() => {
     if (pagination) {
@@ -573,7 +411,7 @@ const Page = () => {
 
   useEffect(() => {
     const fetcData = async (query) => {
-      await loadPlace(query);
+      await loadPolygon(query);
     };
     if (querys) {
       const query = queryBuild();
@@ -589,161 +427,148 @@ const Page = () => {
         <div className="container-fluid">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1>Газрууд</h1>
+              <h1>Полигонууд</h1>
             </div>
           </div>
         </div>
       </section>
-
       <section className="content">
         <div className="container-fluid">
           <div className="card card-body page-nav-body py-3">
             <div className="row">
-              <div className="col-12">
-                <div className="d-sm-flex align-items-center justify-space-between">
-                  <nav className="page-nav ">
-                    <PageNavItem label="Газрууд" link="/places" />
-                    <PageNavItem
-                      label="Газруудын ангилал"
-                      link="/place-categories"
-                    />
-                  </nav>
+              <div className="card card-body py-5 px-4">
+                <div className="datatable-header-tools">
+                  <div className="datatable-actions">
+                    <Button
+                      onClick={() => router.push(`/polygon/add`)}
+                      className="datatable-action add-bg"
+                    >
+                      <i className="fa fa-plus"></i> Нэмэх
+                    </Button>
+                    <Button
+                      onClick={handleEdit}
+                      className="datatable-action edit-bg"
+                    >
+                      <i className="fa fa-pencil"></i> Засах
+                    </Button>
+                    <Button
+                      className="datatable-action delete-bg"
+                      onClick={() => showModal("delete")}
+                    >
+                      <i className="fa fa-trash"></i>
+                      Устгах
+                    </Button>
+                  </div>
+                  <div className="datatable-tools">
+                    <Tooltip placement="left" title="Шинчлэх">
+                      <Button
+                        className="datatable-tool"
+                        onClick={() => refreshTable()}
+                      >
+                        <i className="fa-solid fa-arrows-rotate"></i>
+                      </Button>
+                    </Tooltip>
+                    <Tooltip placement="left" title="Баганын тохиргоо">
+                      <Button
+                        className="datatable-tool"
+                        onClick={() => showModal("column")}
+                      >
+                        <i className="fa-solid fa-table"></i>
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </div>
+                <div className="tableBox">
+                  <Table
+                    size="small"
+                    rowSelection={rowSelection}
+                    columns={filterdColumns}
+                    dataSource={data}
+                    pagination={tableParams.pagination}
+                    onChange={handleTableChange}
+                    loading={contentLoad}
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <div className="card card-body py-5 px-4">
-            <div className="datatable-header-tools">
-              <div className="datatable-actions">
-                <Button
-                  onClick={() => router.push(`/places/add`)}
-                  className="datatable-action add-bg"
-                >
-                  <i className="fa fa-plus"></i> Нэмэх
-                </Button>
-                <Button
-                  onClick={handleEdit}
-                  className="datatable-action edit-bg"
-                >
-                  <i className="fa fa-pencil"></i> Засах
-                </Button>
-                <Button
-                  className="datatable-action delete-bg"
-                  onClick={() => showModal("delete")}
-                >
-                  <i className="fa fa-trash"></i>
-                  Устгах
-                </Button>
-              </div>
-              <div className="datatable-tools">
-                <Tooltip placement="left" title="Шинчлэх">
-                  <Button
-                    className="datatable-tool"
-                    onClick={() => refreshTable()}
-                  >
-                    <i className="fa-solid fa-arrows-rotate"></i>
-                  </Button>
-                </Tooltip>
-                <Tooltip placement="left" title="Баганын тохиргоо">
-                  <Button
-                    className="datatable-tool"
-                    onClick={() => showModal("column")}
-                  >
-                    <i className="fa-solid fa-table"></i>
-                  </Button>
-                </Tooltip>
-              </div>
-            </div>
-            <div className="tableBox">
-              <Table
-                size="small"
-                rowSelection={rowSelection}
-                columns={filterdColumns}
-                dataSource={data}
-                pagination={tableParams.pagination}
-                onChange={handleTableChange}
-                loading={contentLoad}
-              />
-            </div>
-          </div>
         </div>
-      </section>
-
-      {/* Modals */}
-      <Modal
-        visible={visible && visible.column}
-        title="Тохиргоо"
-        onCancel={() => handleCancel()}
-        footer={[
-          <Button key="back" onClick={() => handleCancel()}>
-            Буцах
-          </Button>,
-          <Button
-            key="submit"
-            htmlType="submit"
-            type="primary"
-            onClick={() => setColumns(cloneColumns)}
-          >
-            Хадгалах
-          </Button>,
-        ]}
-      >
-        <div className="tableBox">
-          <table className="custom-table">
-            <tr>
-              <th>№</th>
-              <th>Нэр</th>
-              <th>Харагдах эсэх</th>
-            </tr>
-            {cloneColumns.map((col, index) => (
+        {/* Modals */}
+        <Modal
+          visible={visible && visible.column}
+          title="Тохиргоо"
+          onCancel={() => handleCancel()}
+          footer={[
+            <Button key="back" onClick={() => handleCancel()}>
+              Буцах
+            </Button>,
+            <Button
+              key="submit"
+              htmlType="submit"
+              type="primary"
+              onClick={() => setColumns(cloneColumns)}
+            >
+              Хадгалах
+            </Button>,
+          ]}
+        >
+          <div className="tableBox">
+            <table className="custom-table">
               <tr>
-                <td>{index + 1}</td>
-                <td>{col.title}</td>
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={col.status}
-                    name={col.key}
-                    onChange={handleColumn.bind()}
-                  />{" "}
-                </td>
+                <th>№</th>
+                <th>Нэр</th>
+                <th>Харагдах эсэх</th>
               </tr>
-            ))}
-          </table>
-        </div>
-      </Modal>
+              {cloneColumns.map((col, index) => (
+                <tr>
+                  <td>{index + 1}</td>
+                  <td>{col.title}</td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={col.status}
+                      name={col.key}
+                      onChange={handleColumn.bind()}
+                    />{" "}
+                  </td>
+                </tr>
+              ))}
+            </table>
+          </div>
+        </Modal>
 
-      {/* Delete modal */}
-      <Modal
-        visible={visible && visible.delete}
-        title="Устгах"
-        onCancel={() => handleCancel()}
-        footer={[
-          <Button key="back" onClick={() => handleCancel()}>
-            Болих
-          </Button>,
-          <Button
-            key="submit"
-            htmlType="submit"
-            type="primary"
-            danger
-            className="btn-danger"
-            loading={contentLoad}
-            onClick={() => handleDelete(cloneColumns)}
-          >
-            Устгах
-          </Button>,
-        ]}
-      >
-        <div className="tableBox">
-          <p>
-            {" "}
-            Та нийт <b> {selectedRowKeys.length} </b> мэдээлэл сонгосон байна
-            устгахдаа итгэлтэй байна уу? <br /> Хэрэв устгавал дахин сэргээх
-            боломжгүйг анхаарна уу.{" "}
-          </p>
-        </div>
-      </Modal>
+        {/* Delete modal */}
+        <Modal
+          visible={visible && visible.delete}
+          title="Устгах"
+          onCancel={() => handleCancel()}
+          footer={[
+            <Button key="back" onClick={() => handleCancel()}>
+              Болих
+            </Button>,
+            <Button
+              key="submit"
+              htmlType="submit"
+              type="primary"
+              danger
+              className="btn-danger"
+              loading={contentLoad}
+              onClick={() => handleDelete(cloneColumns)}
+            >
+              Устгах
+            </Button>,
+          ]}
+        >
+          <div className="tableBox">
+            <p>
+              {" "}
+              Та нийт <b> {selectedRowKeys.length} </b> мэдээлэл сонгосон байна
+              устгахдаа итгэлтэй байна уу? <br /> Хэрэв устгавал дахин сэргээх
+              боломжгүйг анхаарна уу.{" "}
+            </p>
+          </div>
+        </Modal>
+      </section>
     </>
   );
 };

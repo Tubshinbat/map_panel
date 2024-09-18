@@ -43,6 +43,27 @@ const Side = () => {
                 icon={"fa-solid fa-layer-group"}
                 label={`Газрууд`}
               />
+
+              <SideBarItem
+                href="/city-province"
+                icon={"fa-solid fa-layer-group"}
+                label={`Хот / Аймаг`}
+              />
+              <SideBarItem
+                href="/district"
+                icon={"fa-solid fa-layer-group"}
+                label={`Сум / Дүүрэг`}
+              />
+              <SideBarItem
+                href="/khoroo"
+                icon={"fa-solid fa-layer-group"}
+                label={`Баг / Хороо`}
+              />
+              <SideBarItem
+                href="/polygon"
+                icon={"fa-solid fa-layer-group"}
+                label={`Полигон`}
+              />
               <SideBarItem
                 href="/rooms"
                 icon={"fa-solid fa-house-user"}

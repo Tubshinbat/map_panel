@@ -4,16 +4,20 @@ import { useNotificationContext } from "context/notificationContext";
 import { useEffect, useState } from "react";
 
 export default () => {
-  const [places, setPlaces] = useState([]);
-  const [singlePlace, setSinglePlace] = useState(null);
+  const [polygons, setPolygons] = useState([]);
+  const [polygon, setPolygon] = useState(null);
   const [pagination, setPagination] = useState(null);
   const { setError, setAlert, setContentLoad } = useNotificationContext();
 
-  const deletePlace = async (ids) => {
+  const config = {
+    headers: { "content-type": "multipart/form-data" },
+  };
+
+  const deletePolygon = async (ids) => {
     try {
       setContentLoad(true);
-      await axios.delete("/places/delete", { params: { id: ids } });
-      await loadPlace();
+      await axios.delete("/polygons/delete", { params: { id: ids } });
+      await loadPolygon("select=properties");
       setContentLoad(false);
     } catch (error) {
       setError(error);
@@ -21,13 +25,13 @@ export default () => {
     }
   };
 
-  const loadPlace = async (query = "") => {
+  const loadPolygon = async (query = "") => {
     try {
       setContentLoad(true);
-      const result = await axios.get(`/places?${query}`);
+      const result = await axios.get(`/polygons?${query}`);
 
       if (result && result.data) {
-        setPlaces(result.data.data);
+        setPolygons(result.data.data);
         setPagination(result.data.pagination);
       }
       setContentLoad(false);
@@ -37,68 +41,72 @@ export default () => {
     }
   };
 
-  const createPlace = async (values) => {
+  const createPolygon = async (values) => {
     try {
       setContentLoad(true);
-      const result = await axios.post("/places", values);
+      const result = await axios.post("/polygons", values, config);
       if (result && result.data) {
         setAlert("Амжилтай нэмэгдлээ");
-        return true;
-      }
-      return false;
-    } catch (err) {
-      setError(err);
-      return false;
-    }
-  };
-
-  const updatePlace = async (values, slug) => {
-    try {
-      setContentLoad(true);
-      const result = await axios.put(`/places/${slug}`, values);
-      if (result && result.data) {
-        setAlert("Амжилтай хадгаллаа");
-        return true;
-      }
-    } catch (err) {
-      setError(err);
-      return false;
-    }
-  };
-
-  const getPlace = async (id) => {
-    try {
-      setContentLoad(true);
-      const result = await axios.get(`/places/${id}`);
-      if (result && result.data) {
-        setSinglePlace(result.data.data);
+        setContentLoad(false);
         return true;
       }
       setContentLoad(false);
     } catch (err) {
       setError(err);
+      setContentLoad(false);
       return false;
+    }
+  };
+
+  const updatePolygon = async (values, slug) => {
+    try {
+      setContentLoad(true);
+      const result = await axios.put(`/polygons/${slug}`, values);
+      if (result && result.data) {
+        setAlert("Амжиллтай хадгаллаа");
+        setContentLoad(false);
+        return true;
+      }
+      setContentLoad(false);
+    } catch (error) {
+      setError(error);
+      setContentLoad(false);
+      return false;
+    }
+  };
+
+  const getPolygon = async (id) => {
+    try {
+      setContentLoad(true);
+      const result = await axios.get(`/polygons/${id}`);
+      if (result && result.data) {
+        setPolygon(result.data.data);
+      }
+      setContentLoad(false);
+    } catch (err) {
+      setError(err);
+      setContentLoad(false);
     }
   };
 
   useEffect(() => {
     const fetchDatas = async () => {
-      await loadPlace();
+      await loadPolygon("select=properties");
     };
 
     fetchDatas()
-      .then((result) => {})
-      .catch((err) => {});
+      .then()
+      .catch((err) => setError(err));
   }, []);
 
   return {
-    places,
+    loadPolygon,
+    polygons,
+    polygon,
     pagination,
-    loadPlace,
-    deletePlace,
-    createPlace,
-    getPlace,
-    singlePlace,
-    updatePlace,
+    getPolygon,
+    createPolygon,
+    deletePolygon,
+    updatePolygon,
   };
 };

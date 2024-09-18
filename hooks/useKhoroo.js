@@ -4,16 +4,16 @@ import { useNotificationContext } from "context/notificationContext";
 import { useEffect, useState } from "react";
 
 export default () => {
-  const [places, setPlaces] = useState([]);
-  const [singlePlace, setSinglePlace] = useState(null);
+  const [khoroos, setCities] = useState([]);
+  const [khoroo, setKhoroo] = useState(null);
   const [pagination, setPagination] = useState(null);
   const { setError, setAlert, setContentLoad } = useNotificationContext();
 
-  const deletePlace = async (ids) => {
+  const deleteKhoroo = async (ids) => {
     try {
       setContentLoad(true);
-      await axios.delete("/places/delete", { params: { id: ids } });
-      await loadPlace();
+      await axios.delete("/khoroos/delete", { params: { id: ids } });
+      await loadKhoroo();
       setContentLoad(false);
     } catch (error) {
       setError(error);
@@ -21,13 +21,13 @@ export default () => {
     }
   };
 
-  const loadPlace = async (query = "") => {
+  const loadKhoroo = async (query = "") => {
     try {
       setContentLoad(true);
-      const result = await axios.get(`/places?${query}`);
+      const result = await axios.get(`/khoroos?${query}`);
 
       if (result && result.data) {
-        setPlaces(result.data.data);
+        setCities(result.data.data);
         setPagination(result.data.pagination);
       }
       setContentLoad(false);
@@ -37,53 +37,71 @@ export default () => {
     }
   };
 
-  const createPlace = async (values) => {
+  const createKhoroo = async (values) => {
     try {
       setContentLoad(true);
-      const result = await axios.post("/places", values);
+      const result = await axios.post("/khoroos", values);
       if (result && result.data) {
         setAlert("Амжилтай нэмэгдлээ");
         return true;
       }
+      setContentLoad(false);
       return false;
     } catch (err) {
+      setContentLoad(false);
       setError(err);
       return false;
     }
   };
 
-  const updatePlace = async (values, slug) => {
+  const updateKhoroo = async (values, slug) => {
     try {
       setContentLoad(true);
-      const result = await axios.put(`/places/${slug}`, values);
+      const result = await axios.put(`/khoroos/${slug}`, values);
       if (result && result.data) {
         setAlert("Амжилтай хадгаллаа");
         return true;
       }
+      setContentLoad(false);
     } catch (err) {
+      setContentLoad(false);
       setError(err);
       return false;
     }
   };
 
-  const getPlace = async (id) => {
+  const getKhoroo = async (id) => {
     try {
       setContentLoad(true);
-      const result = await axios.get(`/places/${id}`);
+      const result = await axios.get(`/khoroos/${id}`);
       if (result && result.data) {
-        setSinglePlace(result.data.data);
-        return true;
+        setKhoroo(result.data.data);
       }
       setContentLoad(false);
     } catch (err) {
       setError(err);
+      setContentLoad(false);
       return false;
+    }
+  };
+
+  const getAllData = async () => {
+    try {
+      setContentLoad(true);
+      const result = await axios.get("/khoroos/all");
+      if (result && result.data) {
+        setCities(result.data.data);
+      }
+      setContentLoad(false);
+    } catch (error) {
+      setError(error);
+      setContentLoad(false);
     }
   };
 
   useEffect(() => {
     const fetchDatas = async () => {
-      await loadPlace();
+      await loadKhoroo();
     };
 
     fetchDatas()
@@ -92,13 +110,14 @@ export default () => {
   }, []);
 
   return {
-    places,
+    khoroos,
     pagination,
-    loadPlace,
-    deletePlace,
-    createPlace,
-    getPlace,
-    singlePlace,
-    updatePlace,
+    loadKhoroo,
+    deleteKhoroo,
+    createKhoroo,
+    getKhoroo,
+    getAllData,
+    khoroo,
+    updateKhoroo,
   };
 };
